@@ -10,7 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.rg.expense_tracker.constants.Constants
+import com.rg.expense_tracker.ui.SplashScreen
 import com.rg.expense_tracker.ui.country_currency.CountryCurrenncyViewModel
+import com.rg.expense_tracker.ui.country_currency.Currency_Select_Screen
 import com.rg.expense_tracker.ui.theme.Expense_TrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,7 +29,7 @@ class MainActivity : ComponentActivity() {
                 val viewModel : CountryCurrenncyViewModel = hiltViewModel()
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                    ApplicationNavigation()
                 }
             }
         }
@@ -31,14 +37,18 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
+fun ApplicationNavigation() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = Constants.SPLASHSCREEN)
+    {
+        composable(route = Constants.SPLASHSCREEN)
+        {
+            SplashScreen(navController = navController)
+        }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    Expense_TrackerTheme {
-        Greeting("Android")
+        composable(route = Constants.CURRENCY_SELECT_SCREEN)
+        {
+            Currency_Select_Screen()
+        }
     }
 }

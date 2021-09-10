@@ -1,6 +1,6 @@
 package com.rg.expense_tracker.models
 
-data class Country_CurrencyItem(
+data class CountryCurrency(
     val currency: Currency,
     val flag: String,
     val id: Int,

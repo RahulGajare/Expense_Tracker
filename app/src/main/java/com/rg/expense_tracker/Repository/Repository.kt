@@ -4,25 +4,26 @@ import android.app.Application
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.rg.expense_tracker.interfaces.IRepository
-import com.rg.expense_tracker.models.Country_Currency
+import com.rg.expense_tracker.models.CountryCurrencies
+import com.rg.expense_tracker.models.resource.Resource
 import java.io.IOException
 import javax.inject.Inject
 
 class Repository @Inject constructor  () : IRepository {
-    override fun getCurrencies(application: Application): Country_Currency? {
-        val jsonString: String
+    override fun getCurrencies(application: Application): Resource<CountryCurrencies> {
+        val  jsonString: String
         try {
             jsonString = application.assets.open("countries.json").bufferedReader().use { it.readText() }
         } catch (ioException: IOException) {
             ioException.printStackTrace()
-            return null
+            return Resource.Error("IO Exception")
         }
 
         val gson = Gson()
-        val countryCurrencyType = object : TypeToken<Country_Currency>() {}.type
+        val countryCurrencyType = object : TypeToken<CountryCurrencies>() {}.type
 
-        var country_Currency: Country_Currency = gson.fromJson(jsonString, countryCurrencyType)
+        var countryCurrency: CountryCurrencies = gson.fromJson(jsonString, countryCurrencyType)
 
-        return country_Currency
+        return Resource.Success(countryCurrency)
     }
 }
