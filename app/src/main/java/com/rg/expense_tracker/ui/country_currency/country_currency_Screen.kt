@@ -91,7 +91,7 @@ fun CurrencyItem(countryCurrenncy: CountryCurrency) {
             text = countryCurrenncy.currency.code,
             Modifier.weight(0.1F)
         )
-      
+
 
     }
 }
