@@ -1,15 +1,13 @@
 package com.rg.expense_tracker.room
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.DatabaseConfiguration
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import com.rg.expense_tracker.models.localdata.UserAccount
 
 
-@Database(entities = arrayOf(UserAccount::class), version = 1, exportSchema = false)
+@Database(entities = [UserAccount::class], version = 1, exportSchema = false)
+@TypeConverters(Converters::class)
 public abstract class UserAccountRoomDataBase :  RoomDatabase(){
 
     abstract fun userAccountDao(): UserAccountDao
