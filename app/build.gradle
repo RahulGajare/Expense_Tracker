@@ -77,4 +77,10 @@ dependencies {
 
     //Retrofit
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    //RoomData base
+    def room_version = "2.3.0"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt  "androidx.room:room-compiler:$room_version"
 }
