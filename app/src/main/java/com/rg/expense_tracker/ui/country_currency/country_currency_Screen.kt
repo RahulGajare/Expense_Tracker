@@ -31,7 +31,15 @@ fun Currency_Select_Screen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SearchBar("Search")
+
             CurrencyList(viewModel = viewModel)
+            Button(onClick = { /*TODO*/ },
+            modifier = Modifier.weight(1f)) {
+                Text(text = "Next")
+
+            }
+
+
         }
 
 
@@ -57,7 +65,7 @@ fun SearchBar(hint: String) {
                 .height(50.dp),
             placeholder = { Text(text = hint, color = Color.Gray) },
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Red,
+                backgroundColor = MaterialTheme.colors.onSecondary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             )
@@ -70,30 +78,36 @@ fun SearchBar(hint: String) {
 fun CurrencyList(viewModel: CountryCurrenncyViewModel) {
 
     val currencyList = viewModel.currencyListState.value
-    LazyColumn()
-    {
-        items(currencyList)
-        { item ->
-            CurrencyItem(item)
+
+        LazyColumn()
+        {
+            items(currencyList)
+            { item ->
+                CurrencyItem(item)
+            }
         }
-    }
 
 }
 
 @Composable
 fun CurrencyItem(countryCurrenncy: CountryCurrency) {
-    Row {
-        Text(
-            text = countryCurrenncy.name,
-            Modifier.weight(0.8F)
-        )
-        Text(
-            text = countryCurrenncy.currency.code,
-            Modifier.weight(0.1F)
-        )
-
-
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row {
+            Text(
+                text = countryCurrenncy.name,
+                Modifier.weight(0.8F)
+            )
+            Text(
+                text = countryCurrenncy.currency.code,
+                Modifier.weight(0.1F)
+            )
+            
+        }
+        Divider(thickness = 2.dp)
+        
+       
     }
+
 }
 
 @Preview

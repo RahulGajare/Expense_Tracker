@@ -5,5 +5,6 @@ class Constants {
     companion object Screens{
         const val SPLASHSCREEN ="splash_screen"
         const val CURRENCY_SELECT_SCREEN ="currency_select_screen"
+        const val HOME_SCREEN ="home_screen"
     }
 }
