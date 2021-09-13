@@ -6,5 +6,6 @@ class Constants {
         const val SPLASHSCREEN ="splash_screen"
         const val CURRENCY_SELECT_SCREEN ="currency_select_screen"
         const val HOME_SCREEN ="home_screen"
+        const val ADD_ACCOUNT_SCREEN ="add_account_screen"
     }
 }

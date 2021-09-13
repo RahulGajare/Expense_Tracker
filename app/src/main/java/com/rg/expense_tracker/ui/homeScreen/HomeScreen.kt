@@ -1,11 +1,15 @@
 package com.rg.expense_tracker.ui.homeScreen
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntSizeAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -24,11 +28,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.rg.expense_tracker.constants.Constants
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     Column(modifier = Modifier.fillMaxSize()) {
-        TopSection()
+        TopSection(navController =navController)
         BottomSection()
 
     }
@@ -38,17 +44,20 @@ fun HomeScreen() {
 }
 
 @Composable
-fun TopSection() {
+fun TopSection(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.3f)
-            .background(Color.Green)
+            .background(MaterialTheme.colors.secondary)
     )
     {
         Column(modifier = Modifier.wrapContentHeight()) {
             TopNavBar()
-            AccountBalance()
+            AccountBalance(mainBalance = 200 , currency = "$")
+            {
+                navController.navigate(Constants.CURRENCY_SELECT_SCREEN)
+            }
         }
 
     }
@@ -59,7 +68,7 @@ fun BottomSection() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Cyan)
+            .background(Color.White)
     )
     {
 
@@ -72,15 +81,15 @@ fun TopNavBar() {
     {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.End,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack, contentDescription = "Go Back",
-                modifier = Modifier
-                    .size(40.dp)
-                    .padding(start = 16.dp, top = 16.dp)
-            )
+//            Icon(
+//                imageVector = Icons.Default.ArrowBack, contentDescription = "Go Back",
+//                modifier = Modifier
+//                    .size(40.dp)
+//                    .padding(start = 16.dp, top = 16.dp)
+//            )
             Icon(
                 imageVector = Icons.Default.Menu, contentDescription = "Menu",
                 modifier = Modifier
@@ -92,7 +101,7 @@ fun TopNavBar() {
 }
 
 @Composable
-fun AccountBalance() {
+fun AccountBalance(mainBalance : Int , currency :String , onCurrencyClick : () -> Unit) {
     Column(
         modifier = Modifier
             .wrapContentHeight()
@@ -103,10 +112,24 @@ fun AccountBalance() {
             text = "Your Wallet",
             fontSize = 20.sp
         )
-        Text(
-            text = "$ 2548",
-            fontSize = 40.sp
-        )
+        Row() {
+            Text(
+                text = "$currency $mainBalance",
+                fontSize = 40.sp
+            )
+            val result = remember {
+                mutableStateOf("INR")
+            }
+            val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent())
+            {
+                result.value = it.toString()
+            }
+            Text(modifier = Modifier.clickable(onClick = {launcher.launch()}),
+                text = "INR",
+                fontSize = 40.sp
+            )
+        }
+
     }
 }
 
@@ -132,7 +155,7 @@ fun AccountBalanceCard() {
                 ) {
                     CircularProgressBar(percentage = 1f, number = 100)
                     Column() {
-                        Text(text = "Good Financial",
+                        Text(text = "Remaining Balance",
                             modifier = Modifier.offset(x = 5.dp))
                         Text(text = "60 % of Main Balance spent this month",
                             modifier = Modifier.offset(x = 5.dp))
@@ -211,5 +234,5 @@ fun CircularProgressBar(
 @Preview
 @Composable
 fun DefaultPreview() {
-    HomeScreen()
+
 }

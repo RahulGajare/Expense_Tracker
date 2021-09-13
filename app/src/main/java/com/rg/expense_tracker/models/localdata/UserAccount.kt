@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "UserAccount")
 data class UserAccount(
-    val userName: String,
+    val accountName: String,
     @PrimaryKey val id: Int,
     val mainBalance: Int,
     val spendingList: List<SpentItems>,

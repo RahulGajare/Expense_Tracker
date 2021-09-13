@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.rg.expense_tracker.constants.Constants
 import com.rg.expense_tracker.ui.SplashScreen
+import com.rg.expense_tracker.ui.addAccount.AddAccountScreen
 import com.rg.expense_tracker.ui.country_currency.CountryCurrenncyViewModel
 import com.rg.expense_tracker.ui.country_currency.Currency_Select_Screen
 import com.rg.expense_tracker.ui.homeScreen.HomeScreen
@@ -40,12 +41,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ApplicationNavigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Constants.HOME_SCREEN)
+    NavHost(navController = navController, startDestination = Constants.ADD_ACCOUNT_SCREEN)
     {
 
         composable(route = Constants.HOME_SCREEN)
         {
-            HomeScreen()
+            HomeScreen(navController)
         }
         composable(route = Constants.SPLASHSCREEN)
         {
@@ -56,5 +57,12 @@ fun ApplicationNavigation() {
         {
             Currency_Select_Screen()
         }
+
+        composable(route = Constants.ADD_ACCOUNT_SCREEN)
+        {
+            AddAccountScreen(navController = navController)
+        }
+
+
     }
 }
