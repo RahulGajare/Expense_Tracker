@@ -4,12 +4,12 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntSizeAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
@@ -36,12 +36,15 @@ fun HomeScreen() {
 
 
 }
+
 @Composable
 fun TopSection() {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight(0.3f)
-        .background(Color.Green))
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.3f)
+            .background(Color.Green)
+    )
     {
         Column(modifier = Modifier.wrapContentHeight()) {
             TopNavBar()
@@ -53,9 +56,11 @@ fun TopSection() {
 
 @Composable
 fun BottomSection() {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.Cyan))
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Cyan)
+    )
     {
 
     }
@@ -65,39 +70,50 @@ fun BottomSection() {
 fun TopNavBar() {
     Box(modifier = Modifier.fillMaxWidth())
     {
-        Row(verticalAlignment = Alignment.CenterVertically,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()) {
-            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Go Back",
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack, contentDescription = "Go Back",
                 modifier = Modifier
                     .size(40.dp)
                     .padding(start = 16.dp, top = 16.dp)
             )
-            Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu",
+            Icon(
+                imageVector = Icons.Default.Menu, contentDescription = "Menu",
                 modifier = Modifier
                     .size(40.dp)
-                    .padding(end = 16.dp, top = 16.dp))
+                    .padding(end = 16.dp, top = 16.dp)
+            )
         }
     }
 }
 
 @Composable
 fun AccountBalance() {
-    Column(modifier = Modifier
-        .wrapContentHeight()
-        .fillMaxHeight()
-        .padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
-        Text(text = "Your Wallet",
-       fontSize = 20.sp)
-        Text(text = "$ 2548",
-            fontSize = 40.sp)
+    Column(
+        modifier = Modifier
+            .wrapContentHeight()
+            .fillMaxHeight()
+            .padding(top = 20.dp, start = 16.dp, end = 16.dp)
+    ) {
+        Text(
+            text = "Your Wallet",
+            fontSize = 20.sp
+        )
+        Text(
+            text = "$ 2548",
+            fontSize = 40.sp
+        )
     }
 }
 
 @Composable
 fun AccountBalanceCard() {
 
-    Box(contentAlignment = Alignment.Center ,modifier = Modifier.offset(y = 150.dp))
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.offset(y = 150.dp))
     {
         Card(
             backgroundColor = Color.White,
@@ -108,51 +124,82 @@ fun AccountBalanceCard() {
             elevation = 20.dp
         )
         {
-            CircularProgressBar(percentage = 0.5f, number = 100 )
+            Column(horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly) {
+                Row(modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment =  Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    CircularProgressBar(percentage = 1f, number = 100)
+                    Column() {
+                        Text(text = "Good Financial",
+                            modifier = Modifier.offset(x = 5.dp))
+                        Text(text = "60 % of Main Balance spent this month",
+                            modifier = Modifier.offset(x = 5.dp))
+                    }
+
+                }
+                Divider(thickness = 2.dp,
+                modifier = Modifier.padding(6.dp))
+
+                Icon(
+                    imageVector = Icons.Default.AddCircle, contentDescription = "Add Expense",
+                    modifier = Modifier
+                        .size(40.dp)
+                )
+                Text(text = "Add expense")
+
+
+            }
+
         }
     }
 
 
-    
 }
 
 @Composable
 fun CircularProgressBar(
-    percentage : Float ,number : Int,
-                        radius: Dp = 50.dp,
-                        color : Color = Color.Green,
-                        strokeWidth : Dp =8.dp,
-                        animDuration : Int = 1000,
-                        animDelay : Int = 0
+    percentage: Float, number: Int,
+    radius: Dp = 20.dp,
+    color: Color = Color.Green,
+    strokeWidth: Dp = 1.dp,
+    animDuration: Int = 1000,
+    animDelay: Int = 0
 ) {
     var animationPlayed by remember {
         mutableStateOf(false)
     }
 
-    val curPercentage = animateFloatAsState(targetValue = if(animationPlayed) percentage else 0f,
-        animationSpec = tween(durationMillis = animDuration, delayMillis = animDelay))
-    
+    val curPercentage = animateFloatAsState(
+        targetValue = if (animationPlayed) percentage else 0f,
+        animationSpec = tween(durationMillis = animDuration, delayMillis = animDelay)
+    )
+
     LaunchedEffect(key1 = true)
     {
         animationPlayed = true
     }
-    
-    Box(contentAlignment = Alignment.Center,
-    modifier = Modifier.size(radius * 2f))
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(radius * 2f)
+    )
     {
-            Canvas(modifier = Modifier.size(radius *2f))
-            {
-                drawArc(color = Color.Green,
+        Canvas(modifier = Modifier.size(radius * 2f))
+        {
+            drawArc(
+                color = Color.Green,
                 startAngle = -90f,
                 sweepAngle = (360 * curPercentage.value),
-                    useCenter = false,
-                    style = Stroke(width = strokeWidth.toPx(),cap = StrokeCap.Round)
-                )
+                useCenter = false,
+                style = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
+            )
 
-            }
-        
+        }
+
         Text(
-            text = (curPercentage.value * number).toInt().toString(),
+            text = (curPercentage.value * number).toInt().toString() + "%",
             color = Color.Black
 
         )
@@ -163,7 +210,6 @@ fun CircularProgressBar(
 
 @Preview
 @Composable
-fun DefaultPreview()
-{
+fun DefaultPreview() {
     HomeScreen()
 }
