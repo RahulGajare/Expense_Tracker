@@ -49,7 +49,7 @@ fun TopSection(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.3f)
-            .background(MaterialTheme.colors.secondary)
+            .background(MaterialTheme.colors.primaryVariant)
     )
     {
         Column(modifier = Modifier.wrapContentHeight()) {
@@ -124,7 +124,7 @@ fun AccountBalance(mainBalance : Int , currency :String , onCurrencyClick : () -
             {
                 result.value = it.toString()
             }
-            Text(modifier = Modifier.clickable(onClick = {launcher.launch()}),
+            Text(modifier = Modifier.clickable(onClick = {}),
                 text = "INR",
                 fontSize = 40.sp
             )
