@@ -8,11 +8,12 @@ import com.rg.expense_tracker.models.CountryCurrencies
 import com.rg.expense_tracker.models.localdata.UserAccount
 import com.rg.expense_tracker.models.resource.Resource
 import com.rg.expense_tracker.room.UserAccountDao
+import kotlinx.coroutines.flow.Flow
 import java.io.IOException
 import javax.inject.Inject
 
 class Repository @Inject constructor(private val userAccountDao: UserAccountDao) : IRepository {
-    override fun getCurrencies(application: Application): Resource<CountryCurrencies> {
+   override  fun getCurrencies(application: Application): Resource<CountryCurrencies> {
         val jsonString: String
         try {
             jsonString =
@@ -27,10 +28,15 @@ class Repository @Inject constructor(private val userAccountDao: UserAccountDao)
 
         var countryCurrency: CountryCurrencies = gson.fromJson(jsonString, countryCurrencyType)
 
+
         return Resource.Success(countryCurrency)
     }
 
-    fun addUserAccount(userAccount: UserAccount) {
-        userAccountDao.addUser(userAccount = userAccount)
+   override suspend fun  addUserAccount(userAccount: UserAccount) {
+        userAccountDao.addAccount(userAccount = userAccount)
+    }
+
+    override suspend fun getAccounts(): List<UserAccount> {
+       return  userAccountDao.getAccounts()
     }
 }

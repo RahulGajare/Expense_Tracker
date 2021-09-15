@@ -2,6 +2,7 @@ package com.rg.expense_tracker.ui.addAccount
 
 import android.provider.SyncStateContract
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,12 +10,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.rg.expense_tracker.constants.Constants
+import com.rg.expense_tracker.models.Currency
 
 @Composable
 fun AddAccountScreen(navController: NavController) {
@@ -63,15 +68,35 @@ fun AddAccountScreen(navController: NavController) {
                 color = MaterialTheme.colors.onSurface,
             )
 
-            Text(text = "INR",
+            Text(text = viewModel.currencyState.value,
                 color = MaterialTheme.colors.onSurface,
                 modifier = Modifier
                     .border(border = BorderStroke(width = 2.dp, color = Color.Black))
                     .fillMaxWidth()
                     .padding(6.dp)
-                    .clickable { navController.navigate(Constants.CURRENCY_SELECT_SCREEN) }
+                    .clickable {
+
+                        navController.navigate(Constants.CURRENCY_SELECT_SCREEN)
+                    }
+
             )
 
+            Button(modifier = Modifier.background(color = MaterialTheme.colors.primaryVariant),
+                onClick = { viewModel.addNewAccount()}) {
+                Text(text = "Proceed")
+            }
+
+        }
+    }
+
+    val currencyScreenResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("selected_Currency")
+        ?.observeAsState()
+
+    currencyScreenResult?.value.let {
+        if (it != null) {
+            viewModel.currencyState.value = it
         }
     }
 }

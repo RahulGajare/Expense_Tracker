@@ -1,6 +1,7 @@
 package com.rg.expense_tracker.ui.country_currency
 
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,11 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.rg.expense_tracker.models.CountryCurrency
+import com.rg.expense_tracker.models.Currency
 import java.util.*
 
 @Composable
-fun Currency_Select_Screen() {
+fun Currency_Select_Screen(navController: NavController) {
 
     val viewModel: CountryCurrenncyViewModel = hiltViewModel()
 
@@ -32,7 +35,7 @@ fun Currency_Select_Screen() {
         ) {
             SearchBar("Search")
 
-            CurrencyList(viewModel = viewModel)
+            CurrencyList(viewModel = viewModel , navController = navController)
             Button(onClick = { /*TODO*/ },
             modifier = Modifier.weight(1f)) {
                 Text(text = "Next")
@@ -75,7 +78,7 @@ fun SearchBar(hint: String) {
 }
 
 @Composable
-fun CurrencyList(viewModel: CountryCurrenncyViewModel) {
+fun CurrencyList(viewModel: CountryCurrenncyViewModel, navController: NavController) {
 
     val currencyList = viewModel.currencyListState.value
 
@@ -84,21 +87,28 @@ fun CurrencyList(viewModel: CountryCurrenncyViewModel) {
             items(currencyList)
             { item ->
                 CurrencyItem(item)
+                {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("selected_Currency", it.code)
+                    navController.popBackStack()
+                }
             }
         }
 
 }
 
 @Composable
-fun CurrencyItem(countryCurrenncy: CountryCurrency) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Row {
+fun CurrencyItem(countryCurrency: CountryCurrency , onItemClick : (currency : Currency) -> Unit) {
+    Column(modifier = Modifier.fillMaxSize()
+        .clickable { onItemClick(countryCurrency.currency) }) {
+        Row() {
             Text(
-                text = countryCurrenncy.name,
+                text = countryCurrency.name,
                 Modifier.weight(0.8F)
             )
             Text(
-                text = countryCurrenncy.currency.code,
+                text = countryCurrency.currency.code,
                 Modifier.weight(0.1F)
             )
             

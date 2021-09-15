@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "UserAccount")
 data class UserAccount(
     val accountName: String,
-    @PrimaryKey val id: Int,
-    val mainBalance: Int,
-    val spendingList: List<SpentItems>,
+    @PrimaryKey(autoGenerate = true) val id: Int? =null,
+    val accountBalance: String,
+    val spendingList: List<SpentItems>? = emptyList(),
     val currencyType: String
 ) {
 }

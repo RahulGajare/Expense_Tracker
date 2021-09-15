@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.Flow
 interface UserAccountDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun addUser(userAccount: UserAccount)
+   suspend fun addAccount(userAccount: UserAccount)
 
     @Query("select * from UserAccount")
-    fun getUsers(): Flow<List<UserAccount>>
+   suspend fun getAccounts(): List<UserAccount>
 
 }

@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ApplicationNavigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Constants.ADD_ACCOUNT_SCREEN)
+    NavHost(navController = navController, startDestination = Constants.SPLASHSCREEN)
     {
 
         composable(route = Constants.HOME_SCREEN)
@@ -55,7 +55,7 @@ fun ApplicationNavigation() {
 
         composable(route = Constants.CURRENCY_SELECT_SCREEN)
         {
-            Currency_Select_Screen()
+            Currency_Select_Screen(navController = navController)
         }
 
         composable(route = Constants.ADD_ACCOUNT_SCREEN)
