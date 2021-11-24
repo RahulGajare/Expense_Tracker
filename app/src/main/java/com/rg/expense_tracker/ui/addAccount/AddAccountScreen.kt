@@ -1,23 +1,32 @@
 package com.rg.expense_tracker.ui.addAccount
 
 import android.provider.SyncStateContract
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.rg.expense_tracker.R
 import com.rg.expense_tracker.constants.Constants
 import com.rg.expense_tracker.models.Currency
 
@@ -26,7 +35,7 @@ fun AddAccountScreen(navController: NavController) {
 
     val viewModel: AddAccountViewModel = hiltViewModel()
 
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.primary) {
+    Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -62,6 +71,13 @@ fun AddAccountScreen(navController: NavController) {
             {
                 viewModel.accountBalanceState.value = it
             }
+Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
+    AmountChips("1000")
+    AmountChips("5000")
+    AmountChips("10000")
+
+}
+
 
             Text(
                 text = "Currency",
@@ -110,12 +126,12 @@ fun EditTextField(
 ) {
     TextField(
         modifier = modifier
-            .border(border = BorderStroke(width = 2.dp, color = Color.Black)),
+            .border(border = BorderStroke(width = 2.dp, color = MaterialTheme.colors.primaryVariant)),
         value = value,
         onValueChange = { onTextChange(it.toString()) },
         colors = TextFieldDefaults.textFieldColors(
             textColor = MaterialTheme.colors.onSurface,
-            backgroundColor = MaterialTheme.colors.primaryVariant,
+            backgroundColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
@@ -125,4 +141,33 @@ fun EditTextField(
 
     )
 
+}
+
+@Composable
+fun AmountChips(value : String) {
+    Row(verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier
+            .border(width = 2.dp, color = Color.Black, RoundedCornerShape(25.dp))
+            .clip(
+                shape = RoundedCornerShape(25.dp)
+            )
+            .background(color = MaterialTheme.colors.primary)
+            .height(30.dp)
+            .wrapContentWidth()
+    ) {
+
+        Image(painterResource(R.drawable.plus),contentDescription = "Subtract",modifier = Modifier
+            .padding(horizontal = 6.dp)
+            .size(15.dp))
+
+        Text(text = value ,color = Color.Black, modifier = Modifier.background(Color.Transparent), fontSize = 20.sp)
+
+            Image(painterResource(R.drawable.subtraction),contentDescription = "Subtract",modifier = Modifier
+                .padding(horizontal = 6.dp)
+                .size(15.dp))
+
+        
+    }
+    
 }
