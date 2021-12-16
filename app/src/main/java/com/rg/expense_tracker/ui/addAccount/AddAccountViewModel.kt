@@ -15,7 +15,7 @@ class AddAccountViewModel @Inject constructor(
 ) : ViewModel() {
 
     val accountNameState = mutableStateOf("")
-    val accountBalanceState = mutableStateOf("")
+    val accountBalanceState = mutableStateOf(0)
     val currencyState = mutableStateOf("")
 
 
@@ -26,7 +26,6 @@ class AddAccountViewModel @Inject constructor(
                 accountBalance = accountBalanceState.value,
                 currencyType = currencyState.value))
         }
-
 
     }
 }

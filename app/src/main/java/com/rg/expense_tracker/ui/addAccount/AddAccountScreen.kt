@@ -69,36 +69,66 @@ fun AddAccountScreen(navController: NavController) {
                 keyBoardType = KeyboardType.Number
             )
             {
-                viewModel.accountBalanceState.value = it
+                viewModel.accountBalanceState.value = it.toInt()
             }
 Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
+    AmountChips("100") {
+       if (it ==0)
+       {
+           viewModel.accountBalanceState.value = viewModel.accountBalanceState.value - 100
+       }
+        else
+       {
+           viewModel.accountBalanceState.value = viewModel.accountBalanceState.value + 100
+       }
+    }
+    AmountChips("500")
+    {
+        if (it ==0)
+        {
+            viewModel.accountBalanceState.value = viewModel.accountBalanceState.value - 500
+        }
+        else
+        {
+            viewModel.accountBalanceState.value = viewModel.accountBalanceState.value + 500
+        }
+    }
     AmountChips("1000")
-    AmountChips("5000")
-    AmountChips("10000")
+    {
+        if (it ==0)
+        {
+            viewModel.accountBalanceState.value = viewModel.accountBalanceState.value - 1000
+        }
+        else
+        {
+            viewModel.accountBalanceState.value = viewModel.accountBalanceState.value + 1000
+        }
+    }
 
 }
 
 
-            Text(
-                text = "Currency",
-                color = MaterialTheme.colors.onSurface,
-            )
-
-            Text(text = viewModel.currencyState.value,
-                color = MaterialTheme.colors.onSurface,
-                modifier = Modifier
-                    .border(border = BorderStroke(width = 2.dp, color = Color.Black))
-                    .fillMaxWidth()
-                    .padding(6.dp)
-                    .clickable {
-
-                        navController.navigate(Constants.CURRENCY_SELECT_SCREEN)
-                    }
-
-            )
+//            Text(
+//                text = "Currency",
+//                color = MaterialTheme.colors.onSurface,
+//            )
+//
+//            Text(text = viewModel.currencyState.value,
+//                color = MaterialTheme.colors.onSurface,
+//                modifier = Modifier
+//                    .border(border = BorderStroke(width = 2.dp, color = Color.Black))
+//                    .fillMaxWidth()
+//                    .padding(6.dp)
+//                    .clickable {
+//
+//                        navController.navigate(Constants.CURRENCY_SELECT_SCREEN)
+//                    }
+//
+//            )
 
             Button(modifier = Modifier.background(color = MaterialTheme.colors.primaryVariant),
-                onClick = { viewModel.addNewAccount()}) {
+                onClick = { viewModel.addNewAccount()
+                    navController.navigate(Constants.HOME_SCREEN)}) {
                 Text(text = "Proceed")
             }
 
@@ -144,7 +174,7 @@ fun EditTextField(
 }
 
 @Composable
-fun AmountChips(value : String) {
+fun AmountChips(value : String , onAmountAclicked : (math : Int)-> Unit ) {
     Row(verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier
@@ -155,17 +185,21 @@ fun AmountChips(value : String) {
             .background(color = MaterialTheme.colors.primary)
             .height(30.dp)
             .wrapContentWidth()
+
     ) {
 
-        Image(painterResource(R.drawable.plus),contentDescription = "Subtract",modifier = Modifier
+        Image(painterResource(R.drawable.subtraction),contentDescription = "Subtract",modifier = Modifier
             .padding(horizontal = 6.dp)
-            .size(15.dp))
+            .size(15.dp)
+            . clickable { onAmountAclicked(0) })
+
 
         Text(text = value ,color = Color.Black, modifier = Modifier.background(Color.Transparent), fontSize = 20.sp)
 
-            Image(painterResource(R.drawable.subtraction),contentDescription = "Subtract",modifier = Modifier
-                .padding(horizontal = 6.dp)
-                .size(15.dp))
+        Image(painterResource(R.drawable.plus),contentDescription = "Subtract",modifier = Modifier
+            .padding(horizontal = 6.dp)
+            .size(15.dp)
+            .clickable { onAmountAclicked(1) })
 
         
     }

@@ -28,23 +28,34 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.rg.expense_tracker.constants.Constants
+import com.rg.expense_tracker.ui.splashscreen.SplashScreenViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(navController: NavController) {
+    val viewModel: HomeScreenViewModel= hiltViewModel()
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = true)
+    {
+        coroutineScope.launch { viewModel.getActiveVisibleAccount()}
+    }
+
+
     Column(modifier = Modifier.fillMaxSize()) {
-        TopSection(navController =navController)
+        TopSection(navController =navController , viewModel)
         BottomSection()
 
     }
     AccountBalanceCard()
 
-
 }
 
 @Composable
-fun TopSection(navController: NavController) {
+fun TopSection(navController: NavController , viewModel : HomeScreenViewModel) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -54,7 +65,7 @@ fun TopSection(navController: NavController) {
     {
         Column(modifier = Modifier.wrapContentHeight()) {
             TopNavBar()
-            AccountBalance(mainBalance = 200 , currency = "$")
+            AccountBalance(mainBalance = viewModel.accountBalance.value, currency = "$")
             {
                 navController.navigate(Constants.CURRENCY_SELECT_SCREEN)
             }
