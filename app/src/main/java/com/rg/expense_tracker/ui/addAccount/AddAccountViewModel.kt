@@ -15,7 +15,7 @@ class AddAccountViewModel @Inject constructor(
 ) : ViewModel() {
 
     val accountNameState = mutableStateOf("")
-    val accountBalanceState = mutableStateOf(0)
+    val accountBalanceState  = mutableStateOf("")
     val currencyState = mutableStateOf("")
 
 
@@ -27,5 +27,20 @@ class AddAccountViewModel @Inject constructor(
                 currencyType = currencyState.value))
         }
 
+    }
+
+    fun checkValidAmount(selectedValue : Int , addSub : Int) : Boolean
+    {
+        if (addSub ==0 && accountBalanceState.value.toInt() - selectedValue >= 0)
+        {
+            accountBalanceState.value = (accountBalanceState.value.toInt() - selectedValue).toString()
+            return true
+        }
+        else if(addSub ==1)
+        {
+            accountBalanceState.value =  (accountBalanceState.value.toInt() + selectedValue).toString()
+            return true
+        }
+        return false;
     }
 }

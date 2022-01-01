@@ -69,62 +69,31 @@ fun AddAccountScreen(navController: NavController) {
                 keyBoardType = KeyboardType.Number
             )
             {
-                viewModel.accountBalanceState.value = it.toInt()
+                try {
+                    viewModel.accountBalanceState.value = it
+                }
+                catch (ex : Exception)
+                {
+                    // Amount Filled is empty
+                }
             }
 Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
     AmountChips("100") {
-       if (it ==0)
-       {
-           viewModel.accountBalanceState.value = viewModel.accountBalanceState.value - 100
-       }
-        else
-       {
-           viewModel.accountBalanceState.value = viewModel.accountBalanceState.value + 100
-       }
+        //it ==0 for negative.
+        //it ==1 for positive
+       viewModel.checkValidAmount(100, it)
     }
     AmountChips("500")
     {
-        if (it ==0)
-        {
-            viewModel.accountBalanceState.value = viewModel.accountBalanceState.value - 500
-        }
-        else
-        {
-            viewModel.accountBalanceState.value = viewModel.accountBalanceState.value + 500
-        }
+        viewModel.checkValidAmount(500 ,it)
     }
     AmountChips("1000")
     {
-        if (it ==0)
-        {
-            viewModel.accountBalanceState.value = viewModel.accountBalanceState.value - 1000
-        }
-        else
-        {
-            viewModel.accountBalanceState.value = viewModel.accountBalanceState.value + 1000
-        }
+        viewModel.checkValidAmount(1000,it)
     }
 
 }
 
-
-//            Text(
-//                text = "Currency",
-//                color = MaterialTheme.colors.onSurface,
-//            )
-//
-//            Text(text = viewModel.currencyState.value,
-//                color = MaterialTheme.colors.onSurface,
-//                modifier = Modifier
-//                    .border(border = BorderStroke(width = 2.dp, color = Color.Black))
-//                    .fillMaxWidth()
-//                    .padding(6.dp)
-//                    .clickable {
-//
-//                        navController.navigate(Constants.CURRENCY_SELECT_SCREEN)
-//                    }
-//
-//            )
 
             Button(modifier = Modifier.background(color = MaterialTheme.colors.primaryVariant),
                 onClick = { viewModel.addNewAccount()
@@ -150,7 +119,7 @@ Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMax
 @Composable
 fun EditTextField(
     modifier: Modifier = Modifier,
-    value: String,
+    value: String = "",
     keyBoardType: KeyboardType,
     onTextChange: (newText: String) -> Unit
 ) {

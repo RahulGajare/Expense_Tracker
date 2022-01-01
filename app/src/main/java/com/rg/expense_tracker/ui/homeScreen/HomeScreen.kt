@@ -112,7 +112,7 @@ fun TopNavBar() {
 }
 
 @Composable
-fun AccountBalance(mainBalance : Int , currency :String , onCurrencyClick : () -> Unit) {
+fun AccountBalance(mainBalance : String , currency :String , onCurrencyClick : () -> Unit) {
     Column(
         modifier = Modifier
             .wrapContentHeight()
@@ -182,14 +182,9 @@ fun AccountBalanceCard() {
                         .size(40.dp)
                 )
                 Text(text = "Add expense")
-
-
             }
-
         }
     }
-
-
 }
 
 @Composable

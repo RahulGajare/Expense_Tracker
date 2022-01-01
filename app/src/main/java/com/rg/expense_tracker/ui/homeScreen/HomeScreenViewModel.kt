@@ -12,11 +12,10 @@ class HomeScreenViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-    var accountBalance = mutableStateOf(0)
+    var accountBalance = mutableStateOf("")
 
     suspend fun getActiveVisibleAccount()
     {
         accountBalance.value  = repo.getAccounts()[0].accountBalance
     }
-
 }
