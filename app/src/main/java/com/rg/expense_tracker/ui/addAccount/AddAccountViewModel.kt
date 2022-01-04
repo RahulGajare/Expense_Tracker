@@ -31,7 +31,11 @@ class AddAccountViewModel @Inject constructor(
 
     fun checkValidAmount(selectedValue : Int , addSub : Int) : Boolean
     {
-        if (addSub ==0 && accountBalanceState.value.toInt() - selectedValue >= 0)
+        if(accountBalanceState.value.isEmpty() && addSub == 1)
+        {
+            accountBalanceState.value =  selectedValue.toString()
+        }
+        else if (addSub ==0 && accountBalanceState.value.toInt() - selectedValue >= 0)
         {
             accountBalanceState.value = (accountBalanceState.value.toInt() - selectedValue).toString()
             return true
