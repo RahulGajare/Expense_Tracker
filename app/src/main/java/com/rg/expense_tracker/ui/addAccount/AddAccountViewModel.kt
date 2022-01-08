@@ -23,7 +23,8 @@ class AddAccountViewModel @Inject constructor(
     {
         viewModelScope.launch {
             repo.addUserAccount(UserAccount(accountName = accountNameState.value,
-                accountBalance = accountBalanceState.value,
+                initialAccountBalance  = accountBalanceState.value,
+                remainingAccountBalance = "75",
                 currencyType = currencyState.value))
         }
 
@@ -35,7 +36,7 @@ class AddAccountViewModel @Inject constructor(
         {
             accountBalanceState.value =  selectedValue.toString()
         }
-        else if (addSub ==0 && accountBalanceState.value.toInt() - selectedValue >= 0)
+        else if (addSub ==0 && !accountBalanceState.value.isEmpty() && accountBalanceState.value.toInt() - selectedValue >= 0)
         {
             accountBalanceState.value = (accountBalanceState.value.toInt() - selectedValue).toString()
             return true

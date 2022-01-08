@@ -41,7 +41,11 @@ fun HomeScreen(navController: NavController) {
 
     LaunchedEffect(key1 = true)
     {
-        coroutineScope.launch { viewModel.getActiveVisibleAccount()}
+//        coroutineScope.launch { viewModel.getActiveVisibleAccount()}
+//        coroutineScope.launch {
+//            viewModel.getExpensedPercentage(viewModel.initialAccountBalanceState.value.toInt(),
+//                                            viewModel.remainingAccountBalanceState.value.toInt())
+//        }
     }
 
 
@@ -50,7 +54,7 @@ fun HomeScreen(navController: NavController) {
         BottomSection()
 
     }
-    AccountBalanceCard()
+    AccountBalanceCard(viewModel.amountInPercentageState.value.toInt())
 
 }
 
@@ -65,7 +69,7 @@ fun TopSection(navController: NavController , viewModel : HomeScreenViewModel) {
     {
         Column(modifier = Modifier.wrapContentHeight()) {
             TopNavBar()
-            AccountBalance(mainBalance = viewModel.accountBalance.value, currency = "$")
+            AccountBalance(mainBalance = viewModel.initialAccountBalanceState.value, currency = "$")
             {
                 navController.navigate(Constants.CURRENCY_SELECT_SCREEN)
             }
@@ -145,7 +149,7 @@ fun AccountBalance(mainBalance : String , currency :String , onCurrencyClick : (
 }
 
 @Composable
-fun AccountBalanceCard() {
+fun AccountBalanceCard(remainingAmountPercentage : Int) {
 
     Box(contentAlignment = Alignment.Center, modifier = Modifier.offset(y = 150.dp))
     {
@@ -164,11 +168,11 @@ fun AccountBalanceCard() {
                     verticalAlignment =  Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    CircularProgressBar(percentage = 1f, number = 100)
+                    CircularProgressBar(remainingAmountPercentage.toFloat()/100, remainingAmountPercentage)
                     Column() {
                         Text(text = "Remaining Balance",
                             modifier = Modifier.offset(x = 5.dp))
-                        Text(text = "60 % of Main Balance spent this month",
+                        Text(text = (100 -remainingAmountPercentage).toString() + " % of Main Balance spent this month",
                             modifier = Modifier.offset(x = 5.dp))
                     }
 
@@ -189,7 +193,8 @@ fun AccountBalanceCard() {
 
 @Composable
 fun CircularProgressBar(
-    percentage: Float, number: Int,
+    percentage: Float,
+    number: Int,
     radius: Dp = 20.dp,
     color: Color = Color.Green,
     strokeWidth: Dp = 1.dp,
@@ -228,7 +233,7 @@ fun CircularProgressBar(
         }
 
         Text(
-            text = (curPercentage.value * number).toInt().toString() + "%",
+            text = "$number%",
             color = Color.Black
 
         )

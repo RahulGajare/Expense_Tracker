@@ -19,6 +19,7 @@ import com.rg.expense_tracker.ui.addAccount.AddAccountScreen
 import com.rg.expense_tracker.ui.country_currency.CountryCurrenncyViewModel
 import com.rg.expense_tracker.ui.country_currency.Currency_Select_Screen
 import com.rg.expense_tracker.ui.homeScreen.HomeScreen
+import com.rg.expense_tracker.ui.homeScreen.HomeScreenNew
 import com.rg.expense_tracker.ui.theme.Expense_TrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -46,7 +47,7 @@ fun ApplicationNavigation() {
 
         composable(route = Constants.HOME_SCREEN)
         {
-            HomeScreen(navController)
+            HomeScreenNew(navController)
         }
         composable(route = Constants.SPLASHSCREEN)
         {

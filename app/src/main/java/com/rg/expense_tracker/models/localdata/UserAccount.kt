@@ -7,8 +7,10 @@ import androidx.room.PrimaryKey
 data class UserAccount(
     val accountName: String,
     @PrimaryKey(autoGenerate = true) val id: Int? =null,
-    val accountBalance: String,
+    val initialAccountBalance: String,
+    val remainingAccountBalance: String,
     val spendingList: List<SpentItems>? = emptyList(),
     val currencyType: String
+
 ) {
 }
