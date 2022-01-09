@@ -70,7 +70,14 @@ fun AddAccountScreen(navController: NavController) {
             )
             {
                 try {
-                    viewModel.accountBalanceState.value = it
+                    if(it.isEmpty())
+                    {
+                        viewModel.accountBalanceState.value = it
+                    }
+                    else if(it.toIntOrNull() != null)
+                        {
+                            viewModel.accountBalanceState.value = it
+                        }
                 }
                 catch (ex : Exception)
                 {

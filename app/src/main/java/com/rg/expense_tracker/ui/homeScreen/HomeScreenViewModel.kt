@@ -1,5 +1,7 @@
 package com.rg.expense_tracker.ui.homeScreen
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.ViewModel
@@ -17,6 +19,7 @@ class HomeScreenViewModel @Inject constructor
     var remainingAccountBalanceState = mutableStateOf("")
     var amountInPercentageState = mutableStateOf(0)
     var radioOptionsSelectedState = mutableStateOf("Debit")
+    var speakToTextState = mutableStateOf("")
 
     init {
         viewModelScope.launch{

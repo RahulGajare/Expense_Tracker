@@ -7,5 +7,7 @@ class Constants {
         const val CURRENCY_SELECT_SCREEN ="currency_select_screen"
         const val HOME_SCREEN ="home_screen"
         const val ADD_ACCOUNT_SCREEN ="add_account_screen"
+        const val TYPE ="type"
+        const val TALK ="talk"
     }
 }
