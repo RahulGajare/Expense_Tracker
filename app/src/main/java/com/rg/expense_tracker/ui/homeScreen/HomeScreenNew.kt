@@ -2,6 +2,7 @@ package com.rg.expense_tracker.ui.homeScreen
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.speech.RecognizerIntent
 import android.widget.Toast
@@ -9,22 +10,27 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.Absolute.Center
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalProvider
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.insets.navigationBarsWithImePadding
+import com.google.accompanist.insets.statusBarsPadding
 import com.rg.expense_tracker.constants.Constants
 import java.util.*
 
@@ -48,54 +54,41 @@ fun HomeScreenNew (navController: NavController)
             }
         }
     }
-
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Color.White)
-        .padding(12.dp))
-    {
-        TopSection(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 50.dp) , viewModel = viewModel
-        )
-        DetailCard(modifier = Modifier
-            .border(
-                border = BorderStroke(
-                    width = 2.dp,
-                    color = MaterialTheme.colors.primary
-                )
+        Column(modifier = Modifier
+            .statusBarsPadding()
+            .navigationBarsWithImePadding()
+            .fillMaxSize()
+            .background(color = Color.White)
+            .padding(12.dp))
+        {
+            TopSection(modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 50.dp) , viewModel = viewModel
             )
-            .fillMaxWidth())
-        BottomSectionHomeScreen(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 50.dp), viewModel)
-        ExpenseInputOption(modifier = Modifier.fillMaxWidth().
-        padding(top = 20.dp)){
-            if(it.equals(Constants.TALK))
-            {
-                // Get the Intent action
-                val sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-                // Language model defines the purpose, there are special models for other use cases, like search.
-                sttIntent.putExtra(
-                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            DetailCard(modifier = Modifier
+                .border(
+                    border = BorderStroke(
+                        width = 2.dp,
+                        color = MaterialTheme.colors.primary
+                    )
                 )
-                // Adding an extra language, you can use any language from the Locale class.
-                sttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                // Text that shows up on the Speech input prompt.
-                sttIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now!")
-                try {
-                    // Start the intent for a result, and pass in our request code.
-
-                    resultLauncher?.launch(sttIntent)
-                } catch (e: ActivityNotFoundException) {
-                    // Handling error when the service is not available.
-                    e.printStackTrace()
-                    Toast.makeText(context, "Your device does not support STT.", Toast.LENGTH_LONG).show()
+                .fillMaxWidth())
+            BottomSectionHomeScreen(modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 50.dp), viewModel)
+            ExpenseInputOption(modifier = Modifier.fillMaxWidth().
+            padding(top = 20.dp)){
+                if(it==Constants.TALK)
+                {
+                    onMicButtonClick(resultLauncher,context)
                 }
             }
+
         }
-    }
+    TransactionTextInput()
+
+
+
 }
 
 @Composable
@@ -226,11 +219,72 @@ fun ExpenseInputOption(modifier: Modifier , onClick : (String) -> Unit)
     }
 }
 
+private fun onMicButtonClick(
+    resultLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+    context: Context
+) {
+    // Get the Intent action
+    val sttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+    // Language model defines the purpose, there are special models for other use cases, like search.
+    sttIntent.putExtra(
+        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+    )
+    // Adding an extra language, you can use any language from the Locale class.
+    sttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+    // Text that shows up on the Speech input prompt.
+    sttIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now!")
+    try {
+        // Start the intent for a result, and pass in our request code.
+
+        resultLauncher?.launch(sttIntent)
+    } catch (e: ActivityNotFoundException) {
+        // Handling error when the service is not available.
+        e.printStackTrace()
+        Toast.makeText(context, "Your device does not support STT.", Toast.LENGTH_LONG).show()
+    }
+
+}
+
 @Composable
-private fun onMicButtonClick(resultLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>) {
+fun TransactionTextInput()
+{
+    ProvideWindowInsets(windowInsetsAnimationsEnabled = true)
+    {
+        Box(Modifier.fillMaxSize().navigationBarsWithImePadding())
+        {
+            Box(Modifier.fillMaxWidth()
+                .align(Alignment.BottomStart)
+                .background(color = Color.Cyan),
+                contentAlignment = Alignment.BottomStart
+            )
+            {
+                TextField(
+                    modifier = Modifier
+                        .border(border = BorderStroke(width = 2.dp, color = MaterialTheme.colors.primaryVariant)),
+                    value = "type here",
+                    onValueChange = {  },
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = MaterialTheme.colors.onSurface,
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    singleLine = true,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text
+                    )
+
+                )
+            }
+        }
+    }
+
+
 
 
 }
+
 
 
 //@Composable

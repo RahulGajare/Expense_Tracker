@@ -8,11 +8,13 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.insets.ProvideWindowInsets
 import com.rg.expense_tracker.constants.Constants
 import com.rg.expense_tracker.ui.SplashScreen
 import com.rg.expense_tracker.ui.addAccount.AddAccountScreen
@@ -27,14 +29,17 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            Expense_TrackerTheme {
+            ProvideWindowInsets()
+            {  Expense_TrackerTheme {
                 val viewModel : CountryCurrenncyViewModel = hiltViewModel()
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     ApplicationNavigation()
                 }
-            }
+            }}
+
         }
     }
 }
