@@ -14,4 +14,6 @@ interface IRepository {
 
     suspend fun getAccounts() : List<UserAccount>
 
+    suspend fun updateAccount(userAccount: UserAccount)
+
 }

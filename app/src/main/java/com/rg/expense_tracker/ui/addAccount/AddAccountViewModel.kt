@@ -24,7 +24,7 @@ class AddAccountViewModel @Inject constructor(
         viewModelScope.launch {
             repo.addUserAccount(UserAccount(accountName = accountNameState.value,
                 initialAccountBalance  = accountBalanceState.value,
-                remainingAccountBalance = "75",
+                remainingAccountBalance = accountBalanceState.value,
                 currencyType = currencyState.value))
         }
 

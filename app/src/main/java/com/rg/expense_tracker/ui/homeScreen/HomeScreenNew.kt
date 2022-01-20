@@ -14,12 +14,15 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.Absolute.Center
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -27,11 +30,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.rg.expense_tracker.constants.Constants
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -72,12 +77,13 @@ fun HomeScreenNew (navController: NavController)
                         color = MaterialTheme.colors.primary
                     )
                 )
-                .fillMaxWidth())
+                .fillMaxWidth(), viewModel)
             BottomSectionHomeScreen(modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 50.dp), viewModel)
-            ExpenseInputOption(modifier = Modifier.fillMaxWidth().
-            padding(top = 20.dp)){
+            ExpenseInputOption(modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp)){
                 if(it==Constants.TALK)
                 {
                     onMicButtonClick(resultLauncher,context)
@@ -85,7 +91,10 @@ fun HomeScreenNew (navController: NavController)
             }
 
         }
-    TransactionTextInput()
+    TransactionTextInputCard(viewModel)
+    {
+        viewModel.transactionDescriptionState.value = it
+    }
 
 
 
@@ -109,7 +118,7 @@ fun TopSection(modifier: Modifier , viewModel: HomeScreenViewModel)
 }
 
 @Composable
-fun DetailCard(modifier: Modifier)
+fun DetailCard(modifier: Modifier , viewModel: HomeScreenViewModel)
 {
     Box(contentAlignment = Alignment.Center,
         modifier = modifier)
@@ -119,24 +128,24 @@ fun DetailCard(modifier: Modifier)
             .padding(12.dp)) {
             Row() {
                 Text(
-                    text = "Initial Amount ",
+                    text = "Remaining Amount ",
                     fontSize = 20.sp
                 )
 
                 Text(
-                    text = "₹ 1000",
+                    text = viewModel.remainingAccountBalanceState.value,
                     fontSize = 20.sp
                 )
             }
 
             Row() {
                 Text(
-                    text = "Spent Amount ",
+                    text = "Spent Amount",
                     fontSize = 20.sp
                 )
 
                 Text(
-                    text = "₹ 500",
+                    text = viewModel.spentAccountBalanceState.value,
                     fontSize = 20.sp
                 )
             }
@@ -199,20 +208,27 @@ fun RadioOptions(modifier: Modifier , selectedValue : String , onSelected : (Str
 fun ExpenseInputOption(modifier: Modifier , onClick : (String) -> Unit)
 {
     Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceEvenly) {
-        Text(modifier = Modifier.border(
+        Text(modifier = Modifier
+            .border(
                 border = BorderStroke(
                     width = 2.dp,
-                    color = MaterialTheme.colors.primary)).
-            padding(8.dp).clickable  { onClick(Constants.TALK) },
+                    color = MaterialTheme.colors.primary
+                )
+            )
+            .padding(8.dp)
+            .clickable { onClick(Constants.TALK) },
             text = "talk",
             fontSize = 20.sp
         )
-        Text(modifier = Modifier.border(
-            border = BorderStroke(
-                width = 2.dp,
-                color = MaterialTheme.colors.primary)).
-            padding(8.dp).
-            clickable  { onClick(Constants.TYPE) },
+        Text(modifier = Modifier
+            .border(
+                border = BorderStroke(
+                    width = 2.dp,
+                    color = MaterialTheme.colors.primary
+                )
+            )
+            .padding(8.dp)
+            .clickable { onClick(Constants.TYPE) },
             text = "type",
             fontSize = 20.sp
         )
@@ -247,43 +263,110 @@ private fun onMicButtonClick(
 }
 
 @Composable
-fun TransactionTextInput()
+fun TransactionTextInputCard(viewModel: HomeScreenViewModel , onTextChange: (newText: String) -> Unit)
 {
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true)
     {
-        Box(Modifier.fillMaxSize().navigationBarsWithImePadding())
+        Box(
+            Modifier
+                .fillMaxSize()
+                .navigationBarsWithImePadding())
         {
-            Box(Modifier.fillMaxWidth()
-                .align(Alignment.BottomStart)
-                .background(color = Color.Cyan),
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .align(Alignment.BottomStart),
                 contentAlignment = Alignment.BottomStart
             )
             {
-                TextField(
-                    modifier = Modifier
-                        .border(border = BorderStroke(width = 2.dp, color = MaterialTheme.colors.primaryVariant)),
-                    value = "type here",
-                    onValueChange = {  },
-                    colors = TextFieldDefaults.textFieldColors(
-                        textColor = MaterialTheme.colors.onSurface,
-                        backgroundColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    singleLine = true,
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text
-                    )
-
+                Card(
+                    shape = RoundedCornerShape(8.dp),
+                    backgroundColor = MaterialTheme.colors.surface,
                 )
+                {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(text = "Description")
+                        EditTextField(value = viewModel.transactionDescriptionState.value,
+                            keyBoardType = KeyboardType.Text,
+                            maxLines = 1,
+                            singleLine = true)
+                        {
+                            viewModel.transactionDescriptionState.value = it
+                        }
+                        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+
+                        Text(text = "Amount" , modifier = Modifier.padding(top = 6.dp))
+                        EditTextField(value = viewModel.transactionAmountState.value,
+                            keyBoardType = KeyboardType.Number,
+                            maxLines = 1,
+                            singleLine = true)
+                        {
+                            try {
+                                // this condition for enabling the deletion of last letter
+                                if(it.isEmpty())
+                                {
+                                    viewModel.transactionAmountState.value = it
+                                }
+                                else if(it.toIntOrNull() != null)
+                                {
+                                    viewModel.transactionAmountState.value = it
+                                }
+                            }
+                            catch (ex : Exception)
+                            {
+                                // Amount Filled is empty
+                            }
+                        }
+
+
+                        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+                        val coroutineScope = rememberCoroutineScope()
+                        Button(onClick = { coroutineScope.launch{viewModel.createTransaction()}  },
+                        modifier = Modifier
+                            .border(
+                                border = BorderStroke(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colors.primary
+                                )
+                            ),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
+                            ) {
+                            Text(text = "Confirm")
+                        }
+                    }
+                }
+
             }
         }
     }
-
-
-
-
 }
+
+@Composable
+fun EditTextField(value :String,
+                  modifier: Modifier = Modifier,
+                  keyBoardType: KeyboardType,
+                  singleLine : Boolean = false,
+                  maxLines: Int,
+                  onValueChange : (String)-> Unit)
+
+{
+    TextField(modifier = Modifier
+        .fillMaxWidth()
+        .background(color = Color.Transparent),
+        value = value,
+        onValueChange = { onValueChange(it)},
+        singleLine = singleLine,
+        maxLines = maxLines,
+        colors = TextFieldDefaults.textFieldColors(
+            textColor = MaterialTheme.colors.onSurface,
+            backgroundColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent),
+        keyboardOptions = KeyboardOptions(keyboardType = keyBoardType))
+}
+
+
 
 
 

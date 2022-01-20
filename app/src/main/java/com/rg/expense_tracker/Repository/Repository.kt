@@ -39,4 +39,8 @@ class Repository @Inject constructor(private val userAccountDao: UserAccountDao)
     override suspend fun getAccounts(): List<UserAccount> {
        return  userAccountDao.getAccounts()
     }
+
+    override suspend fun updateAccount(userAccount: UserAccount) {
+        userAccountDao.updateAccount(userAccount)
+    }
 }

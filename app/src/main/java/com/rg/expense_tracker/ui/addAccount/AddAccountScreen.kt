@@ -65,7 +65,7 @@ fun AddAccountScreen(navController: NavController) {
                 modifier = Modifier
                     .padding(bottom = 20.dp)
                     .fillMaxWidth(),
-                value = viewModel.accountBalanceState.value.toString(),
+                value = viewModel.accountBalanceState.value,
                 keyBoardType = KeyboardType.Number
             )
             {
