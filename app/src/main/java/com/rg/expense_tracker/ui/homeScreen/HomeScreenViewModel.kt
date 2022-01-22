@@ -13,12 +13,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.logging.Handler
 import javax.inject.Inject
+import kotlin.concurrent.schedule
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor
     (private val repo : IRepository) : ViewModel() {
     lateinit var activeAccount : UserAccount
+    var walletNameState = mutableStateOf("")
     var initialAccountBalanceState = mutableStateOf("")
     var remainingAccountBalanceState = mutableStateOf("")
     var spentAccountBalanceState = mutableStateOf("")
@@ -27,6 +30,7 @@ class HomeScreenViewModel @Inject constructor
     var speakToTextState = mutableStateOf("")
     var transactionDescriptionState = mutableStateOf("")
     var transactionAmountState = mutableStateOf("")
+    var transactionCardVisibility = mutableStateOf(false)
 
     init {
         viewModelScope.launch{
@@ -38,6 +42,7 @@ class HomeScreenViewModel @Inject constructor
    suspend fun getActiveVisibleAccount()
     {
         activeAccount = repo.getAccounts()[0]
+        walletNameState.value = activeAccount.accountName
         initialAccountBalanceState.value  = activeAccount.initialAccountBalance
         remainingAccountBalanceState.value  = activeAccount.remainingAccountBalance
         spentAccountBalanceState.value = (initialAccountBalanceState.value.toInt() - remainingAccountBalanceState.value.toInt()).toString()
@@ -48,7 +53,7 @@ class HomeScreenViewModel @Inject constructor
         amountInPercentageState.value = (remainingAccountBalanceState.value.toInt() * 100) / initialValue
     }
 
-    suspend fun createTransaction()
+     suspend fun createTransaction()
     {
         val newBalance =activeAccount.remainingAccountBalance.toInt() - transactionAmountState.value.toInt()
         val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
@@ -57,11 +62,18 @@ class HomeScreenViewModel @Inject constructor
         val spentItem = SpentItems(description = transactionDescriptionState.value,
         spentAmount = transactionAmountState.value,
         dateTime = currentDate)
+
         activeAccount.remainingAccountBalance = newBalance.toString()
         activeAccount.spendingList?.add(spentItem)
-
         repo.updateAccount(activeAccount)
-        getActiveVisibleAccount()
+        transactionDescriptionState.value = ""
+        transactionAmountState.value = ""
+        transactionCardVisibility.value = false
+        viewModelScope.launch{
+            getActiveVisibleAccount()
+        }
+
 
     }
+
 }

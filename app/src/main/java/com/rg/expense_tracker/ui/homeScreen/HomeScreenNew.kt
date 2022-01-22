@@ -17,24 +17,27 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
+import com.rg.expense_tracker.R
 import com.rg.expense_tracker.constants.Constants
 import kotlinx.coroutines.launch
 import java.util.*
@@ -55,46 +58,73 @@ fun HomeScreenNew (navController: NavController)
             if (!result.isNullOrEmpty()) {
                 // Recognized text is in the first position.
                 val recognizedText = result[0]
-                viewModel.speakToTextState.value = recognizedText
+               val amount = recognizedText.filter { it.isDigit() }
+                val description = recognizedText.replace(amount,"")
+                viewModel.transactionDescriptionState.value = description
+                if (amount.isDigitsOnly())
+                viewModel.transactionAmountState.value = amount
             }
         }
     }
-        Column(modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsWithImePadding()
-            .fillMaxSize()
-            .background(color = Color.White)
-            .padding(12.dp))
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(painter = painterResource(id = R.drawable.bg_paper),
+            contentDescription = "background Image",
+        contentScale = ContentScale.FillBounds)
+        Scaffold(backgroundColor = Color.Transparent)
         {
-            TopSection(modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 50.dp) , viewModel = viewModel
-            )
-            DetailCard(modifier = Modifier
-                .border(
-                    border = BorderStroke(
-                        width = 2.dp,
-                        color = MaterialTheme.colors.primary
-                    )
-                )
-                .fillMaxWidth(), viewModel)
-            BottomSectionHomeScreen(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 50.dp), viewModel)
-            ExpenseInputOption(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp)){
-                if(it==Constants.TALK)
+            Box(modifier = Modifier.fillMaxSize().
+            background(color = Color.Transparent)) {
+                Column(modifier = Modifier
+                    .statusBarsPadding()
+                    .navigationBarsWithImePadding()
+                    .fillMaxSize()
+
+                    .padding(12.dp))
                 {
-                    onMicButtonClick(resultLauncher,context)
+
+                    TopSection(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 50.dp) , viewModel = viewModel
+                    )
+                    DetailCard(modifier = Modifier
+                        .border(
+                            border = BorderStroke(
+                                width = 2.dp,
+                                color = MaterialTheme.colors.primary
+                            )
+                        )
+                        .fillMaxWidth(), viewModel)
+                    BottomSectionHomeScreen(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 50.dp), viewModel)
+                    ExpenseInputOption(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)){
+                        if(it==Constants.TALK)
+                        {
+                            onMicButtonClick(resultLauncher,context)
+                        }
+                        viewModel.transactionCardVisibility.value = true;
+                    }
+
                 }
+
+                if(viewModel.transactionCardVisibility.value)
+                {
+                    TransactionTextInputCard(viewModel)
+                    {
+                        viewModel.transactionDescriptionState.value = it
+                    }
+                }
+
+
             }
 
         }
-    TransactionTextInputCard(viewModel)
-    {
-        viewModel.transactionDescriptionState.value = it
+
+
     }
+
 
 
 
@@ -106,12 +136,14 @@ fun TopSection(modifier: Modifier , viewModel: HomeScreenViewModel)
     Column(modifier = modifier)
     {
         Text(
-            text = "Main Balance",
+            text = viewModel.walletNameState.value,
+            style = MaterialTheme.typography.h1,
             fontSize = 40.sp
         )
 
         Text(
             text = "₹ ${viewModel.initialAccountBalanceState.value}",
+            style = MaterialTheme.typography.h1,
             fontSize = 35.sp
         )
     }
@@ -129,23 +161,27 @@ fun DetailCard(modifier: Modifier , viewModel: HomeScreenViewModel)
             Row() {
                 Text(
                     text = "Remaining Amount ",
+                    style = MaterialTheme.typography.h1,
                     fontSize = 20.sp
                 )
 
                 Text(
-                    text = viewModel.remainingAccountBalanceState.value,
+                    text = "₹ ${viewModel.remainingAccountBalanceState.value}",
+                    style = MaterialTheme.typography.h1,
                     fontSize = 20.sp
                 )
             }
 
             Row() {
                 Text(
-                    text = "Spent Amount",
+                    text = "Spent Amount ",
+                    style = MaterialTheme.typography.h1,
                     fontSize = 20.sp
                 )
 
                 Text(
-                    text = viewModel.spentAccountBalanceState.value,
+                    text ="₹ ${viewModel.spentAccountBalanceState.value}" ,
+                    style = MaterialTheme.typography.h1,
                     fontSize = 20.sp
                 )
             }
@@ -174,7 +210,8 @@ fun RadioOptions(modifier: Modifier , selectedValue : String , onSelected : (Str
 {
     val radioOptions = listOf("Debit", "Credit")
     Row(modifier = modifier ,
-        horizontalArrangement = Arrangement.SpaceEvenly) {
+        horizontalArrangement = Arrangement.SpaceEvenly,
+    verticalAlignment = Alignment.CenterVertically) {
         radioOptions.forEach{it ->
             Row(modifier = Modifier
                 .border(
@@ -192,7 +229,9 @@ fun RadioOptions(modifier: Modifier , selectedValue : String , onSelected : (Str
                         ),
                     onClick = { onSelected(it) })
                 Text(
+                    modifier =Modifier.align(alignment = Alignment.CenterVertically),
                     text = it,
+                    style = MaterialTheme.typography.h1,
                     fontSize = 20.sp
                 )
             }
@@ -218,6 +257,7 @@ fun ExpenseInputOption(modifier: Modifier , onClick : (String) -> Unit)
             .padding(8.dp)
             .clickable { onClick(Constants.TALK) },
             text = "talk",
+            style = MaterialTheme.typography.h1,
             fontSize = 20.sp
         )
         Text(modifier = Modifier
@@ -230,6 +270,7 @@ fun ExpenseInputOption(modifier: Modifier , onClick : (String) -> Unit)
             .padding(8.dp)
             .clickable { onClick(Constants.TYPE) },
             text = "type",
+            style = MaterialTheme.typography.h1,
             fontSize = 20.sp
         )
     }
@@ -266,80 +307,84 @@ private fun onMicButtonClick(
 fun TransactionTextInputCard(viewModel: HomeScreenViewModel , onTextChange: (newText: String) -> Unit)
 {
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true)
-    {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .navigationBarsWithImePadding())
         {
             Box(
                 Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-                    .align(Alignment.BottomStart),
-                contentAlignment = Alignment.BottomStart
-            )
+                    .fillMaxSize()
+                    .navigationBarsWithImePadding())
             {
-                Card(
-                    shape = RoundedCornerShape(8.dp),
-                    backgroundColor = MaterialTheme.colors.surface,
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                        .align(Alignment.BottomStart),
+                    contentAlignment = Alignment.BottomStart
                 )
                 {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = "Description")
-                        EditTextField(value = viewModel.transactionDescriptionState.value,
-                            keyBoardType = KeyboardType.Text,
-                            maxLines = 1,
-                            singleLine = true)
-                        {
-                            viewModel.transactionDescriptionState.value = it
-                        }
-                        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
-
-                        Text(text = "Amount" , modifier = Modifier.padding(top = 6.dp))
-                        EditTextField(value = viewModel.transactionAmountState.value,
-                            keyBoardType = KeyboardType.Number,
-                            maxLines = 1,
-                            singleLine = true)
-                        {
-                            try {
-                                // this condition for enabling the deletion of last letter
-                                if(it.isEmpty())
-                                {
-                                    viewModel.transactionAmountState.value = it
-                                }
-                                else if(it.toIntOrNull() != null)
-                                {
-                                    viewModel.transactionAmountState.value = it
-                                }
-                            }
-                            catch (ex : Exception)
+                    Card(
+                        shape = RoundedCornerShape(8.dp),
+                        backgroundColor = MaterialTheme.colors.surface,
+                    )
+                    {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "Description",
+                                style = MaterialTheme.typography.h1)
+                            EditTextField(value = viewModel.transactionDescriptionState.value,
+                                keyBoardType = KeyboardType.Text,
+                                maxLines = 1,
+                                singleLine = true)
                             {
-                                // Amount Filled is empty
+                                viewModel.transactionDescriptionState.value = it
                             }
-                        }
+                            Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+
+                            Text(text = "Amount" ,
+                                style = MaterialTheme.typography.h1,
+                                modifier = Modifier.padding(top = 6.dp))
+                            EditTextField(value = viewModel.transactionAmountState.value,
+                                keyBoardType = KeyboardType.Number,
+                                maxLines = 1,
+                                singleLine = true)
+                            {
+                                try {
+                                    // this condition for enabling the deletion of last letter
+                                    if(it.isEmpty())
+                                    {
+                                        viewModel.transactionAmountState.value = it
+                                    }
+                                    else if(it.toIntOrNull() != null)
+                                    {
+                                        viewModel.transactionAmountState.value = it
+                                    }
+                                }
+                                catch (ex : Exception)
+                                {
+                                    // Amount Filled is empty
+                                }
+                            }
 
 
-                        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
-                        val coroutineScope = rememberCoroutineScope()
-                        Button(onClick = { coroutineScope.launch{viewModel.createTransaction()}  },
-                        modifier = Modifier
-                            .border(
-                                border = BorderStroke(
-                                    width = 2.dp,
-                                    color = MaterialTheme.colors.primary
-                                )
-                            ),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
+                            Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+                            val coroutineScope = rememberCoroutineScope()
+                            Button(onClick = { coroutineScope.launch{viewModel.createTransaction()}  },
+                                modifier = Modifier.padding(top = 6.dp)
+                                    .border(
+                                        border = BorderStroke(
+                                            width = 2.dp,
+                                            color = MaterialTheme.colors.primary
+                                        )
+                                    ),
+                                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
                             ) {
-                            Text(text = "Confirm")
+                                Text(text = "Confirm",
+                                    style = MaterialTheme.typography.h1)
+                            }
                         }
                     }
-                }
 
+                }
             }
         }
-    }
 }
 
 @Composable
