@@ -9,5 +9,6 @@ class Constants {
         const val ADD_ACCOUNT_SCREEN ="add_account_screen"
         const val TYPE ="type"
         const val TALK ="talk"
+        const val PLEASE_FILL_FIELDS ="Please fill all fields"
     }
 }

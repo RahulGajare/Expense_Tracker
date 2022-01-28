@@ -39,6 +39,7 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.rg.expense_tracker.R
 import com.rg.expense_tracker.constants.Constants
+import com.rg.expense_tracker.ui.Utility.ShowSnackBar
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -66,20 +67,27 @@ fun HomeScreenNew (navController: NavController)
             }
         }
     }
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
+
     Box(modifier = Modifier.fillMaxSize()) {
         Image(painter = painterResource(id = R.drawable.bg_paper),
             contentDescription = "background Image",
         contentScale = ContentScale.FillBounds)
-        Scaffold(backgroundColor = Color.Transparent)
+        Scaffold(backgroundColor = Color.Transparent,
+        scaffoldState = scaffoldState,
+        modifier = Modifier.
+        statusBarsPadding()
+            .navigationBarsWithImePadding())
         {
-            Box(modifier = Modifier.fillMaxSize().
-            background(color = Color.Transparent)) {
-                Column(modifier = Modifier
-                    .statusBarsPadding()
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.Transparent)) {
+                Column(modifier = Modifier.
+                        statusBarsPadding()
                     .navigationBarsWithImePadding()
-                    .fillMaxSize()
-
-                    .padding(12.dp))
+                    .padding(6.dp)
+                    .fillMaxSize())
                 {
 
                     TopSection(modifier = Modifier
@@ -111,23 +119,30 @@ fun HomeScreenNew (navController: NavController)
 
                 if(viewModel.transactionCardVisibility.value)
                 {
-                    TransactionTextInputCard(viewModel)
-                    {
+                    TransactionTextInputCard(viewModel,
+                    onTextChange =  {
                         viewModel.transactionDescriptionState.value = it
-                    }
+
+                    }, onConfirmClick =
+                    {
+                        coroutineScope.launch{
+                            val result = viewModel.createTransaction()
+                            if(!result)
+                            {0
+                                coroutineScope.launch { // using the `coroutineScope` to `launch` showing the snackbar
+                                    // taking the `snackbarHostState` from the attached `scaffoldState`
+                                    scaffoldState.snackbarHostState.showSnackbar(
+                                        message = Constants.PLEASE_FILL_FIELDS,
+                                        duration = SnackbarDuration.Short,
+                                    )
+                                }
+                            }
+                        }
+                    })
                 }
-
-
             }
-
         }
-
-
     }
-
-
-
-
 }
 
 @Composable
@@ -304,18 +319,22 @@ private fun onMicButtonClick(
 }
 
 @Composable
-fun TransactionTextInputCard(viewModel: HomeScreenViewModel , onTextChange: (newText: String) -> Unit)
+fun TransactionTextInputCard(viewModel: HomeScreenViewModel ,
+                             onTextChange: (newText: String) -> Unit,
+                             onConfirmClick: () -> Unit)
+
 {
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true)
         {
             Box(
                 Modifier
                     .fillMaxSize()
-                    .navigationBarsWithImePadding())
+                    )
             {
                 Box(
                     Modifier
                         .fillMaxWidth()
+                        .navigationBarsWithImePadding()
                         .padding(10.dp)
                         .align(Alignment.BottomStart),
                     contentAlignment = Alignment.BottomStart
@@ -365,9 +384,10 @@ fun TransactionTextInputCard(viewModel: HomeScreenViewModel , onTextChange: (new
 
 
                             Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
-                            val coroutineScope = rememberCoroutineScope()
-                            Button(onClick = { coroutineScope.launch{viewModel.createTransaction()}  },
-                                modifier = Modifier.padding(top = 6.dp)
+                            
+                            Button(onClick = { onConfirmClick()},
+                                modifier = Modifier
+                                    .padding(top = 6.dp)
                                     .border(
                                         border = BorderStroke(
                                             width = 2.dp,
@@ -410,6 +430,7 @@ fun EditTextField(value :String,
             unfocusedIndicatorColor = Color.Transparent),
         keyboardOptions = KeyboardOptions(keyboardType = keyBoardType))
 }
+
 
 
 

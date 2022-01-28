@@ -4,6 +4,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rg.expense_tracker.interfaces.IRepository
@@ -53,26 +54,48 @@ class HomeScreenViewModel @Inject constructor
         amountInPercentageState.value = (remainingAccountBalanceState.value.toInt() * 100) / initialValue
     }
 
-     suspend fun createTransaction()
+     suspend fun createTransaction() : Boolean
     {
-        val newBalance =activeAccount.remainingAccountBalance.toInt() - transactionAmountState.value.toInt()
-        val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
-        val currentDate = sdf.format(Date())
+        if(validateInput())
+        {
+            val newBalance =activeAccount.remainingAccountBalance.toInt() - transactionAmountState.value.toInt()
+            val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+            val currentDate = sdf.format(Date())
 
-        val spentItem = SpentItems(description = transactionDescriptionState.value,
-        spentAmount = transactionAmountState.value,
-        dateTime = currentDate)
+            val spentItem = SpentItems(description = transactionDescriptionState.value,
+                spentAmount = transactionAmountState.value,
+                dateTime = currentDate)
 
-        activeAccount.remainingAccountBalance = newBalance.toString()
-        activeAccount.spendingList?.add(spentItem)
-        repo.updateAccount(activeAccount)
-        transactionDescriptionState.value = ""
-        transactionAmountState.value = ""
-        transactionCardVisibility.value = false
-        viewModelScope.launch{
-            getActiveVisibleAccount()
+            activeAccount.remainingAccountBalance = newBalance.toString()
+            activeAccount.spendingList?.add(spentItem)
+            repo.updateAccount(activeAccount)
+            transactionDescriptionState.value = ""
+            transactionAmountState.value = ""
+            transactionCardVisibility.value = false
+            viewModelScope.launch{
+                getActiveVisibleAccount()
+            }
+            return true;
+        }
+        else
+        {
+            return false;
         }
 
+    }
+
+
+    fun validateInput() : Boolean
+    {
+        if(transactionDescriptionState.value.isNullOrEmpty() || transactionAmountState.value.isNullOrEmpty())
+        {
+            return false;
+        }
+        else if(!transactionAmountState.value.isDigitsOnly())
+        {
+            return false
+        }
+        return true;
 
     }
 
