@@ -44,6 +44,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 
+@ExperimentalMaterialApi
 @Composable
 fun HomeScreenNew (navController: NavController)
 {
@@ -69,80 +70,88 @@ fun HomeScreenNew (navController: NavController)
     }
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        Image(painter = painterResource(id = R.drawable.bg_paper),
-            contentDescription = "background Image",
-        contentScale = ContentScale.FillBounds)
+    ProvideWindowInsets(windowInsetsAnimationsEnabled = true)
+    {
         Scaffold(backgroundColor = Color.Transparent,
-        scaffoldState = scaffoldState,
-        modifier = Modifier.
-        statusBarsPadding()
-            .navigationBarsWithImePadding())
+            scaffoldState = scaffoldState,
+            modifier = Modifier.
+            navigationBarsWithImePadding().
+            statusBarsPadding()
+        )
         {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color.Transparent)) {
-                Column(modifier = Modifier.
-                        statusBarsPadding()
-                    .navigationBarsWithImePadding()
-                    .padding(6.dp)
-                    .fillMaxSize())
-                {
 
-                    TopSection(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 50.dp) , viewModel = viewModel
-                    )
-                    DetailCard(modifier = Modifier
-                        .border(
-                            border = BorderStroke(
-                                width = 2.dp,
-                                color = MaterialTheme.colors.primary
-                            )
+            Box(modifier = Modifier.fillMaxSize()) {
+                Image(painter = painterResource(id = R.drawable.bg_paper),
+                    contentDescription = "background Image",
+                    contentScale = ContentScale.FillBounds)
+
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.Transparent)) {
+                    Column(modifier = Modifier.
+                    statusBarsPadding()
+                        .padding(6.dp)
+                        .fillMaxSize())
+                    {
+
+                        TopSection(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 50.dp) , viewModel = viewModel
                         )
-                        .fillMaxWidth(), viewModel)
-                    BottomSectionHomeScreen(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 50.dp), viewModel)
-                    ExpenseInputOption(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp)){
-                        if(it==Constants.TALK)
-                        {
-                            onMicButtonClick(resultLauncher,context)
+                        DetailCard(modifier = Modifier
+                            .border(
+                                border = BorderStroke(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colors.primary
+                                )
+                            )
+                            .fillMaxWidth(), viewModel)
+                        BottomSectionHomeScreen(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 50.dp), viewModel)
+                        ExpenseInputOption(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp)) {
+                            if (it == Constants.TALK) {
+                                onMicButtonClick(resultLauncher, context)
+                            }
+                            viewModel.transactionCardVisibility.value = true;
                         }
-                        viewModel.transactionCardVisibility.value = true;
+
                     }
 
-                }
-
-                if(viewModel.transactionCardVisibility.value)
-                {
-                    TransactionTextInputCard(viewModel,
-                    onTextChange =  {
-                        viewModel.transactionDescriptionState.value = it
-
-                    }, onConfirmClick =
+                    if(viewModel.transactionCardVisibility.value)
                     {
-                        coroutineScope.launch{
-                            val result = viewModel.createTransaction()
-                            if(!result)
-                            {0
-                                coroutineScope.launch { // using the `coroutineScope` to `launch` showing the snackbar
-                                    // taking the `snackbarHostState` from the attached `scaffoldState`
-                                    scaffoldState.snackbarHostState.showSnackbar(
-                                        message = Constants.PLEASE_FILL_FIELDS,
-                                        duration = SnackbarDuration.Short,
-                                    )
+                        TransactionTextInputCard(viewModel,
+                            onTextChange =  {
+                                viewModel.transactionDescriptionState.value = it
+
+                            }, onConfirmClick =
+                            {
+                                coroutineScope.launch{
+                                    val result = viewModel.createTransaction()
+                                    if(!result)
+                                    {0
+                                        coroutineScope.launch { // using the `coroutineScope` to `launch` showing the snackbar
+                                            // taking the `snackbarHostState` from the attached `scaffoldState`
+                                            scaffoldState.snackbarHostState.showSnackbar(
+                                                message = Constants.PLEASE_FILL_FIELDS,
+                                                duration = SnackbarDuration.Short,
+                                            )
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                    })
+                            })
+                    }
+
+
                 }
+
             }
-        }
     }
+    }
+
+
 }
 
 @Composable
@@ -324,87 +333,91 @@ fun TransactionTextInputCard(viewModel: HomeScreenViewModel ,
                              onConfirmClick: () -> Unit)
 
 {
-    ProvideWindowInsets(windowInsetsAnimationsEnabled = true)
+    Scaffold(backgroundColor = Color.Transparent,
+        modifier = Modifier.
+        statusBarsPadding()
+    )
+    {
+        Box(
+            Modifier
+                .fillMaxSize()
+        )
         {
             Box(
                 Modifier
-                    .fillMaxSize()
-                    )
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .align(Alignment.BottomStart),
+                contentAlignment = Alignment.BottomStart
+            )
             {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .navigationBarsWithImePadding()
-                        .padding(10.dp)
-                        .align(Alignment.BottomStart),
-                    contentAlignment = Alignment.BottomStart
+                Card(
+                    shape = RoundedCornerShape(8.dp),
+                    backgroundColor = MaterialTheme.colors.surface,
                 )
                 {
-                    Card(
-                        shape = RoundedCornerShape(8.dp),
-                        backgroundColor = MaterialTheme.colors.surface,
-                    )
-                    {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "Description",
-                                style = MaterialTheme.typography.h1)
-                            EditTextField(value = viewModel.transactionDescriptionState.value,
-                                keyBoardType = KeyboardType.Text,
-                                maxLines = 1,
-                                singleLine = true)
-                            {
-                                viewModel.transactionDescriptionState.value = it
-                            }
-                            Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(text = "Description",
+                            style = MaterialTheme.typography.h1)
+                        EditTextField(value = viewModel.transactionDescriptionState.value,
+                            keyBoardType = KeyboardType.Text,
+                            maxLines = 1,
+                            singleLine = true)
+                        {
+                            viewModel.transactionDescriptionState.value = it
+                        }
+                        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
 
-                            Text(text = "Amount" ,
-                                style = MaterialTheme.typography.h1,
-                                modifier = Modifier.padding(top = 6.dp))
-                            EditTextField(value = viewModel.transactionAmountState.value,
-                                keyBoardType = KeyboardType.Number,
-                                maxLines = 1,
-                                singleLine = true)
-                            {
-                                try {
-                                    // this condition for enabling the deletion of last letter
-                                    if(it.isEmpty())
-                                    {
-                                        viewModel.transactionAmountState.value = it
-                                    }
-                                    else if(it.toIntOrNull() != null)
-                                    {
-                                        viewModel.transactionAmountState.value = it
-                                    }
-                                }
-                                catch (ex : Exception)
+                        Text(text = "Amount" ,
+                            style = MaterialTheme.typography.h1,
+                            modifier = Modifier.padding(top = 6.dp))
+                        EditTextField(value = viewModel.transactionAmountState.value,
+                            keyBoardType = KeyboardType.Number,
+                            maxLines = 1,
+                            singleLine = true)
+                        {
+                            try {
+                                // this condition for enabling the deletion of last letter
+                                if(it.isEmpty())
                                 {
-                                    // Amount Filled is empty
+                                    viewModel.transactionAmountState.value = it
+                                }
+                                else if(it.toIntOrNull() != null)
+                                {
+                                    viewModel.transactionAmountState.value = it
                                 }
                             }
-
-
-                            Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
-                            
-                            Button(onClick = { onConfirmClick()},
-                                modifier = Modifier
-                                    .padding(top = 6.dp)
-                                    .border(
-                                        border = BorderStroke(
-                                            width = 2.dp,
-                                            color = MaterialTheme.colors.primary
-                                        )
-                                    ),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
-                            ) {
-                                Text(text = "Confirm",
-                                    style = MaterialTheme.typography.h1)
+                            catch (ex : Exception)
+                            {
+                                // Amount Filled is empty
                             }
                         }
-                    }
 
+
+                        Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
+
+                        Button(onClick = { onConfirmClick()},
+                            modifier = Modifier
+                                .padding(top = 6.dp)
+                                .border(
+                                    border = BorderStroke(
+                                        width = 2.dp,
+                                        color = MaterialTheme.colors.primary
+                                    )
+                                ),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
+                        ) {
+                            Text(text = "Confirm",
+                                style = MaterialTheme.typography.h1)
+                        }
+                    }
                 }
+
             }
         }
+    }
+
+
 }
 
 @Composable
