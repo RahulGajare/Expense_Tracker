@@ -9,7 +9,7 @@ data class UserAccount(
     @PrimaryKey(autoGenerate = true) val id: Int? =null,
     val initialAccountBalance: String,
     var remainingAccountBalance: String,
-    val spendingList: MutableList<SpentItems>? = mutableListOf<SpentItems>(),
+    val spendingList: MutableList<SpentItem>? = mutableListOf<SpentItem>(),
     val currencyType: String
 
 ) {

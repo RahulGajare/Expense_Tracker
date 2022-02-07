@@ -20,6 +20,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -43,8 +45,6 @@ import com.rg.expense_tracker.ui.Utility.ShowSnackBar
 import kotlinx.coroutines.launch
 import java.util.*
 
-
-@ExperimentalMaterialApi
 @Composable
 fun HomeScreenNew (navController: NavController)
 {
@@ -74,9 +74,9 @@ fun HomeScreenNew (navController: NavController)
     {
         Scaffold(backgroundColor = Color.Transparent,
             scaffoldState = scaffoldState,
-            modifier = Modifier.
-            navigationBarsWithImePadding().
-            statusBarsPadding()
+            modifier = Modifier
+                .navigationBarsWithImePadding()
+                .statusBarsPadding()
         )
         {
 
@@ -88,8 +88,8 @@ fun HomeScreenNew (navController: NavController)
                 Box(modifier = Modifier
                     .fillMaxSize()
                     .background(color = Color.Transparent)) {
-                    Column(modifier = Modifier.
-                    statusBarsPadding()
+                    Column(modifier = Modifier
+                        .statusBarsPadding()
                         .padding(6.dp)
                         .fillMaxSize())
                     {
@@ -116,6 +116,20 @@ fun HomeScreenNew (navController: NavController)
                                 onMicButtonClick(resultLauncher, context)
                             }
                             viewModel.transactionCardVisibility.value = true;
+                        }
+                        Button(onClick = { navController.navigate(Constants.TRANSACTION_SCREEN) }) {
+                            Text(modifier = Modifier
+                                .border(
+                                    border = BorderStroke(
+                                        width = 2.dp,
+                                        color = MaterialTheme.colors.primary
+                                    )
+                                )
+                                .padding(8.dp),
+                                text = "View Transaction",
+                                style = MaterialTheme.typography.h1,
+                                fontSize = 20.sp
+                            )
                         }
 
                     }
@@ -333,14 +347,16 @@ fun TransactionTextInputCard(viewModel: HomeScreenViewModel ,
                              onConfirmClick: () -> Unit)
 
 {
-    Scaffold(backgroundColor = Color.Transparent,
-        modifier = Modifier.
-        statusBarsPadding()
-    )
-    {
+    val focusRequester = remember { FocusRequester() }
+    DisposableEffect(Unit) {
+        focusRequester.requestFocus()
+        onDispose { }
+    }
+
         Box(
             Modifier
                 .fillMaxSize()
+                .clickable { viewModel.transactionCardVisibility.value = false }
         )
         {
             Box(
@@ -359,19 +375,25 @@ fun TransactionTextInputCard(viewModel: HomeScreenViewModel ,
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(text = "Description",
                             style = MaterialTheme.typography.h1)
-                        EditTextField(value = viewModel.transactionDescriptionState.value,
+                        EditTextField(
+                            modifier = Modifier
+                                .clickable { focusRequester.requestFocus() }
+                                .focusRequester(focusRequester),
+                            value = viewModel.transactionDescriptionState.value,
                             keyBoardType = KeyboardType.Text,
                             maxLines = 1,
                             singleLine = true)
                         {
                             viewModel.transactionDescriptionState.value = it
                         }
+
                         Divider(color = MaterialTheme.colors.primary, thickness = 1.dp)
 
                         Text(text = "Amount" ,
                             style = MaterialTheme.typography.h1,
                             modifier = Modifier.padding(top = 6.dp))
-                        EditTextField(value = viewModel.transactionAmountState.value,
+                        EditTextField(
+                            value = viewModel.transactionAmountState.value,
                             keyBoardType = KeyboardType.Number,
                             maxLines = 1,
                             singleLine = true)
@@ -415,9 +437,6 @@ fun TransactionTextInputCard(viewModel: HomeScreenViewModel ,
 
             }
         }
-    }
-
-
 }
 
 @Composable
@@ -429,7 +448,7 @@ fun EditTextField(value :String,
                   onValueChange : (String)-> Unit)
 
 {
-    TextField(modifier = Modifier
+    TextField(modifier = modifier
         .fillMaxWidth()
         .background(color = Color.Transparent),
         value = value,

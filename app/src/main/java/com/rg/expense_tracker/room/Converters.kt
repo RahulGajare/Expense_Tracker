@@ -6,7 +6,7 @@ import com.google.gson.Gson
 
 import com.google.gson.reflect.TypeToken
 import com.rg.expense_tracker.models.CountryCurrency
-import com.rg.expense_tracker.models.localdata.SpentItems
+import com.rg.expense_tracker.models.localdata.SpentItem
 import java.lang.reflect.Type
 
 
@@ -28,13 +28,13 @@ class Converters {
 
 
     @TypeConverter
-    fun fromString(value: String?): List<SpentItems> {
-        val listType: Type = object : TypeToken<List<SpentItems>>() {}.type
+    fun fromString(value: String?): List<SpentItem> {
+        val listType: Type = object : TypeToken<List<SpentItem>>() {}.type
         return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
-    fun fromArrayList(list: List<SpentItems>): String {
+    fun fromArrayList(list: List<SpentItem>): String {
         val gson = Gson()
         return gson.toJson(list)
     }

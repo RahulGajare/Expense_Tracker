@@ -1,5 +1,6 @@
 package com.rg.expense_tracker.ui.homeScreen
 
+import android.provider.SyncStateContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateOf
@@ -7,8 +8,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rg.expense_tracker.constants.Constants
 import com.rg.expense_tracker.interfaces.IRepository
-import com.rg.expense_tracker.models.localdata.SpentItems
+import com.rg.expense_tracker.models.localdata.SpentItem
 import com.rg.expense_tracker.models.localdata.UserAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -54,15 +56,25 @@ class HomeScreenViewModel @Inject constructor
         amountInPercentageState.value = (remainingAccountBalanceState.value.toInt() * 100) / initialValue
     }
 
-     suspend fun createTransaction() : Boolean
+     suspend fun createTransaction(transactionType : String) : Boolean
     {
+        var newBalance :Int
         if(validateInput())
         {
-            val newBalance =activeAccount.remainingAccountBalance.toInt() - transactionAmountState.value.toInt()
+            if(transactionType == Constants.TRANSACTION_TYPE_DEBIT)
+            {
+                 newBalance =activeAccount.remainingAccountBalance.toInt() - transactionAmountState.value.toInt()
+            }else if(transactionType == Constants.TRANSACTION_TYPE_CREDIT)
+            {
+                newBalance =activeAccount.remainingAccountBalance.toInt() + transactionAmountState.value.toInt()
+            }
+
+
+
             val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
             val currentDate = sdf.format(Date())
 
-            val spentItem = SpentItems(description = transactionDescriptionState.value,
+            val spentItem = SpentItem(description = transactionDescriptionState.value,
                 spentAmount = transactionAmountState.value,
                 dateTime = currentDate)
 

@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.rg.expense_tracker.constants.Constants
 import com.rg.expense_tracker.ui.SplashScreen
+import com.rg.expense_tracker.ui.TransactionScreen.TransactionScreen
 import com.rg.expense_tracker.ui.addAccount.AddAccountScreen
 import com.rg.expense_tracker.ui.country_currency.CountryCurrenncyViewModel
 import com.rg.expense_tracker.ui.country_currency.Currency_Select_Screen
@@ -67,6 +68,11 @@ fun ApplicationNavigation() {
         composable(route = Constants.ADD_ACCOUNT_SCREEN)
         {
             AddAccountScreen(navController = navController)
+        }
+
+        composable(route = Constants.TRANSACTION_SCREEN)
+        {
+            TransactionScreen(navController = navController)
         }
 
 
