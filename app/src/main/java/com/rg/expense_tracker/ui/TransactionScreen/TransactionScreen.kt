@@ -71,7 +71,7 @@ fun TopBar(navController: NavController) {
         Image(modifier = Modifier.height(40.dp),
             painter = painterResource(id = R.drawable.bg_paper),
             contentDescription = "background Image",
-            contentScale = ContentScale.FillHeight
+            contentScale = ContentScale.FillBounds
         )
         Row(
             modifier = Modifier
