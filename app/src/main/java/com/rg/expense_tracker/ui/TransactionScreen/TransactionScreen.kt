@@ -1,6 +1,5 @@
 package com.rg.expense_tracker.ui.TransactionScreen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,16 +9,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
-import com.rg.expense_tracker.models.localdata.SpentItem
-import com.rg.expense_tracker.ui.homeScreen.HomeScreenViewModel
+import com.rg.expense_tracker.models.localdata.TransactionItem
 
 @Composable
 fun TransactionScreen(navController: NavController)
@@ -40,7 +35,7 @@ fun TransactionScreen(navController: NavController)
 
 
 @Composable
-fun TransactionItem(viewModel : TransactionScreenViewModel, transactionItem: SpentItem ) {
+fun TransactionItem(viewModel : TransactionScreenViewModel, transactionItem: TransactionItem ) {
     Row(modifier = Modifier
         .fillMaxWidth()
         .wrapContentHeight()

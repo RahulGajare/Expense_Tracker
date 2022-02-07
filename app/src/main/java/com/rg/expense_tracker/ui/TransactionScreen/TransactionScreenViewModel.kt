@@ -1,14 +1,11 @@
 package com.rg.expense_tracker.ui.TransactionScreen
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rg.expense_tracker.interfaces.IRepository
-import com.rg.expense_tracker.models.localdata.SpentItem
+import com.rg.expense_tracker.models.localdata.TransactionItem
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +15,7 @@ class TransactionScreenViewModel  @Inject constructor
     var descriptionState = mutableStateOf("")
     var dateState = mutableStateOf("")
     var amountState = mutableStateOf("")
-    var transactionListState = mutableStateOf(listOf<SpentItem>())
+    var transactionListState = mutableStateOf(listOf<TransactionItem>())
 
     init {
         viewModelScope.launch() {getAccount()  }

@@ -1,24 +1,18 @@
 package com.rg.expense_tracker.ui.homeScreen
 
-import android.provider.SyncStateContract
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rg.expense_tracker.constants.Constants
 import com.rg.expense_tracker.interfaces.IRepository
-import com.rg.expense_tracker.models.localdata.SpentItem
+import com.rg.expense_tracker.models.localdata.TransactionItem
 import com.rg.expense_tracker.models.localdata.UserAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.logging.Handler
 import javax.inject.Inject
-import kotlin.concurrent.schedule
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor
@@ -29,7 +23,7 @@ class HomeScreenViewModel @Inject constructor
     var remainingAccountBalanceState = mutableStateOf("")
     var spentAccountBalanceState = mutableStateOf("")
     var amountInPercentageState = mutableStateOf(0)
-    var radioOptionsSelectedState = mutableStateOf("Debit")
+    var transactionTypeSelectedState = mutableStateOf("Debit")
     var speakToTextState = mutableStateOf("")
     var transactionDescriptionState = mutableStateOf("")
     var transactionAmountState = mutableStateOf("")
@@ -56,15 +50,15 @@ class HomeScreenViewModel @Inject constructor
         amountInPercentageState.value = (remainingAccountBalanceState.value.toInt() * 100) / initialValue
     }
 
-     suspend fun createTransaction(transactionType : String) : Boolean
+     suspend fun createTransaction() : Boolean
     {
-        var newBalance :Int
+        var newBalance :Int = 0
         if(validateInput())
         {
-            if(transactionType == Constants.TRANSACTION_TYPE_DEBIT)
+            if(transactionTypeSelectedState.value.lowercase() == Constants.TRANSACTION_TYPE_DEBIT)
             {
                  newBalance =activeAccount.remainingAccountBalance.toInt() - transactionAmountState.value.toInt()
-            }else if(transactionType == Constants.TRANSACTION_TYPE_CREDIT)
+            }else if(transactionTypeSelectedState.value.lowercase() == Constants.TRANSACTION_TYPE_CREDIT)
             {
                 newBalance =activeAccount.remainingAccountBalance.toInt() + transactionAmountState.value.toInt()
             }
@@ -74,9 +68,10 @@ class HomeScreenViewModel @Inject constructor
             val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
             val currentDate = sdf.format(Date())
 
-            val spentItem = SpentItem(description = transactionDescriptionState.value,
+            val spentItem = TransactionItem(description = transactionDescriptionState.value,
                 spentAmount = transactionAmountState.value,
-                dateTime = currentDate)
+                dateTime = currentDate,
+                transactionType = transactionTypeSelectedState.value)
 
             activeAccount.remainingAccountBalance = newBalance.toString()
             activeAccount.spendingList?.add(spentItem)

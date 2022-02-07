@@ -12,7 +12,6 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement.Absolute.Center
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,10 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalProvider
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,14 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.rg.expense_tracker.R
 import com.rg.expense_tracker.constants.Constants
-import com.rg.expense_tracker.ui.Utility.ShowSnackBar
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -234,9 +228,9 @@ fun BottomSectionHomeScreen(modifier: Modifier , viewModel: HomeScreenViewModel)
         Row(modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly) {
            RadioOptions(modifier = Modifier.fillMaxWidth(),
-               selectedValue = viewModel.radioOptionsSelectedState.value,
+               selectedValue = viewModel.transactionTypeSelectedState.value,
                onSelected = {
-                   viewModel.radioOptionsSelectedState.value = it
+                   viewModel.transactionTypeSelectedState.value = it
                })
         }
     }
