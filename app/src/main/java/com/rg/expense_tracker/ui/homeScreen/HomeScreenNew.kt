@@ -111,19 +111,20 @@ fun HomeScreenNew (navController: NavController)
                             }
                             viewModel.transactionCardVisibility.value = true;
                         }
-                        Button(onClick = { navController.navigate(Constants.TRANSACTION_SCREEN) }) {
-                            Text(modifier = Modifier
+                        Button(onClick = { navController.navigate(Constants.TRANSACTION_SCREEN)},
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 6.dp)
                                 .border(
                                     border = BorderStroke(
                                         width = 2.dp,
                                         color = MaterialTheme.colors.primary
                                     )
-                                )
-                                .padding(8.dp),
-                                text = "View Transaction",
-                                style = MaterialTheme.typography.h1,
-                                fontSize = 20.sp
-                            )
+                                ),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary)
+                        ) {
+                            Text(text = "View transactions",
+                                style = MaterialTheme.typography.h1)
                         }
 
                     }
