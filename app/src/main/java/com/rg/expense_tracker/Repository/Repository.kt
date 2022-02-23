@@ -32,8 +32,8 @@ class Repository @Inject constructor(private val userAccountDao: UserAccountDao)
         return Resource.Success(countryCurrency)
     }
 
-   override suspend fun  addUserAccount(userAccount: UserAccount) {
-        userAccountDao.addAccount(userAccount = userAccount)
+   override suspend fun  addUserAccount(userAccount: UserAccount)  : Long {
+        return userAccountDao.addAccount(userAccount = userAccount)
     }
 
     override suspend fun getAccounts(): List<UserAccount> {

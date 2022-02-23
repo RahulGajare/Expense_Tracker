@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface IRepository {
 
    fun getCurrencies(application: Application) : Resource<CountryCurrencies>
-    suspend fun addUserAccount(userAccount: UserAccount)
+    suspend fun addUserAccount(userAccount: UserAccount) : Long
 
     suspend fun getAccounts() : List<UserAccount>
 

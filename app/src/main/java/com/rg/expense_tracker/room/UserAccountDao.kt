@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface UserAccountDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-   suspend fun addAccount(userAccount: UserAccount)
+   suspend fun addAccount(userAccount: UserAccount)  : Long
 
     @Query("select * from UserAccount")
    suspend fun getAccounts(): List<UserAccount>

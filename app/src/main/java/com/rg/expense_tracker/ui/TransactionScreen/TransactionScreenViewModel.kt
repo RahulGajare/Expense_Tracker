@@ -25,7 +25,6 @@ class TransactionScreenViewModel  @Inject constructor
     private suspend  fun getAccount()
     {
         transactionListState.value = repo.getAccounts()[0].spendingList!!
-        val s =""
     }
 
 }

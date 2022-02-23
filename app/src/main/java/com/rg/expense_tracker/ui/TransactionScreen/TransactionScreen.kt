@@ -58,9 +58,7 @@ fun TransactionScreen(navController: NavController) {
                 }
             }
         }
-
     }
-
 
 }
 
